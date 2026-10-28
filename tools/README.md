@@ -96,6 +96,18 @@ quines preguntes ha marcat com a ambigües, quines respostes
 alternatives ha proposat per a preguntes de resposta escrita que
 potser caldria afegir, i quines preguntes no ha respost.
 
+**Validat amb un solucionador real (Bloc V2).** Aquest flux
+(`exportar-ciego.js` → respondre → `comparar.js`) s'havia construït
+però mai s'havia executat de cap a cap amb algú responent de debò.
+Al Bloc V2 es va provar amb un solucionador honest (sense llegir
+`data/questions.js`) sobre dues lliçons de 1r (12 preguntes, tipus
+test/veritat_fals/resposta_escrita/ordenar): 12/12 encerts, 0
+discrepàncies, 0 ambigües. El camp `altres_respostes_possibles` va
+funcionar com cal: per a "Quants ous hi ha? 🥚×12" el solucionador va
+proposar "dotze" com a alternativa raonable no coberta encara per
+`respostes_acceptades` — exactament el tipus de senyal que aquest
+script hauria de donar. Detall complet a `documentos/avances.md`.
+
 ---
 
 ## 4. `sembrar-fallos.js` — "sembra" errors a propòsit per posar a prova el corrector

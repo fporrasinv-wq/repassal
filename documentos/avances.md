@@ -76,3 +76,20 @@
   - Els avisos de "cobertura" es condensen: ja no es llista cada lliçó amb 0 preguntes a facil/dificil (és l'estat esperat mentre no s'implementin); només s'avisa d'una lliçó concreta quan ja té 1-4 preguntes, o quan és nivell normal amb menys de 6
   - Corregida la pregunta de `5è_cas-5-4_q3` (`"...no tiene ninguna fotografía."` → `"...la bibliotecaria le recomendó un libro sobre dinosaurios."`), equivalent exacta de la seva bessona catalana `5è_cat-5-4_q3`; únic canvi a data/questions.js d'aquest bloc
   - Verificat: `node tools/validar.js` sobre el contingut real dona 0 errors; proves sintètiques amb `--fitxer` confirmen cada canvi de regla per separat; `sembrar-fallos.js` + `validar.js --fitxer` reconfirmen detecció 100% dels tipus de mutació estructurals/aritmètics (test-opcio-duplicada, emparellar-dreta-duplicada, aritmetica-numero-alterat) a 4t i 5è; `git diff data/questions.js` és exactament la línia de `pregunta` de `5è_cas-5-4_q3`
+- Sesión 15, Bloc V2 (solucionador): primera execució real de cap a cap del flux `exportar-ciego.js` → respondre → `comparar.js`, construït al Bloc V1 però mai provat amb algú responent de debò:
+  - **Nota d'abast**: la instrucció d'aquest bloc només demanava tocar `tools/README.md` i `documentos/avances.md` (sense tornar a crear `documentos/pendientes.md`, que no existeix a propòsit) i no concretava quin contingut havia de portar el bloc més enllà d'això. Es va preguntar i la resposta va ser "sense preferència"; davant d'això es va triar la interpretació que millor encaixa amb el nom de la rama (`bloque-v2-solucionador`) i amb els passos 2/3 ja descrits a `tools/README.md` ("flux de treball típic"): provar de debò el flux del solucionador, en lloc de no fer res o d'inventar una altra funcionalitat no demanada
+  - Actuant com a solucionador honest (sense llegir `data/questions.js`, només els JSON de `tools/ciego/`), es van respondre dues lliçons de 1r triades a mà, una de cada tipus de contingut diferent per cobrir tipus variats: `1r_mat-1` (Nombres fins a 20: test, veritat_fals, resposta_escrita) i `1r_cat-1` (Síl·labes i lletres: test, veritat_fals, ordenar) — 12 preguntes en total, sense cobrir `emparellar` (cap de les dues lliçons triades en tenia); la resta del curs (132 preguntes) no es va respondre, i això queda reflectit tal qual a l'informe, no amagat
+  - Sortida real de `node tools/exportar-ciego.js --curs 1r`: `Generats 24 fitxers de lliçó a tools/ciego/ · Preguntes totals exportades: 144`
+  - Sortida real de `node tools/comparar.js --resultados tools/resultados --curs 1r`:
+    ```
+    Preguntes esperades (curs 1r): 144
+    Respostes rebudes i comparades: 12
+    Encerts: 12 (100.0%)
+    Discrepàncies: 0
+    Marcades com a ambigües: 0
+    No retornades: 132
+    ```
+  - Troballa real (no inventada): a `1r_mat-1_q5` ("Quants ous hi ha? 🥚×12", resposta_escrita amb clau "12"), el solucionador honest va proposar "dotze" com a resposta alternativa raonable que un infant de 1r podria escriure, i `comparar.js` la va recollir correctament a la secció de "respostes alternatives... no cobertes per `respostes_acceptades`" — confirma que aquest mecanisme funciona com estava pensat. No s'ha tocat `data/questions.js` per afegir "dotze" a `respostes_acceptades` perquè aquest bloc no ho demanava
+  - **El que NO s'ha pogut provar**: la resta del curs 1r (132 preguntes) i la resta de cursos (4t, 5è, 6è) no s'han passat pel solucionador; no es pot afirmar que estiguin lliures de respostes ambigües o discrepàncies només per aquesta prova parcial
+  - `documentos/informe-solucionador.md` s'ha generat en local (és la sortida normal de `comparar.js`) però no s'ha afegit a aquest commit, perquè la instrucció del bloc limitava els fitxers a tocar a `tools/README.md` i `documentos/avances.md`; `tools/ciego/` i `tools/resultados/` tampoc es versionen (ja estaven a `.gitignore`)
+  - `node tools/validar.js` sobre `data/questions.js` (sense tocar-lo en aquest bloc) segueix donant 0 errors, igual que al final del Bloc V1b
