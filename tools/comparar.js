@@ -17,9 +17,10 @@ function getArg(name) {
 }
 const resultatsDir = getArg("--resultados");
 const curs = getArg("--curs");
+const nivellFiltre = getArg("--nivell");
 
 if (!resultatsDir || !curs) {
-  console.error("Ús: node tools/comparar.js --resultados <carpeta> --curs 5è");
+  console.error("Ús: node tools/comparar.js --resultados <carpeta> --curs 5è [--nivell normal]");
   process.exit(2);
 }
 
@@ -49,12 +50,13 @@ fitxers.forEach((f) => {
   }
 });
 
-const idsEsperats = QUESTIONS.filter((q) => q.curs === curs && !q.id.startsWith("TEST_")).map((q) => q.id);
+const idsEsperats = QUESTIONS.filter((q) => q.curs === curs && !q.id.startsWith("TEST_") && (!nivellFiltre || q.nivell === nivellFiltre)).map((q) => q.id);
 const respostesPerId = new Map(totesLesRespostes.map((r) => [r.id, r]));
 
 const discrepancies = [];
 const ambigues = [];
 const altresRespostesProposades = [];
+const notesSenseAmbiguitat = [];
 const noRetornades = [];
 let totalComparades = 0;
 let totalCorrectes = 0;
@@ -74,9 +76,11 @@ idsEsperats.forEach((id) => {
       id,
       tipus: q.tipus,
       respostaSolucionador: JSON.stringify(r.resposta),
+      nota: r.nota || "",
       clau: q.tipus === "test" || q.tipus === "resposta_escrita" ? q.resposta_correcta : JSON.stringify(correctAnswerDescriu(q))
     });
-  if (r.ambigua) ambigues.push({ id, tipus: q.tipus, altres: r.altres_opcions_defensables || [] });
+  if (r.ambigua) ambigues.push({ id, tipus: q.tipus, altres: r.altres_opcions_defensables || [], nota: r.nota || "" });
+  if (r.nota && !r.ambigua) notesSenseAmbiguitat.push({ id, tipus: q.tipus, nota: r.nota });
   if (q.tipus === "resposta_escrita" && Array.isArray(r.altres_respostes_possibles) && r.altres_respostes_possibles.length) {
     const noCobertes = r.altres_respostes_possibles.filter(
       (alt) => ![q.resposta_correcta, ...(q.respostes_acceptades || [])].some((c) => normalitza(c) === normalitza(alt))
@@ -92,6 +96,11 @@ function correctAnswerDescriu(q) {
   return q.resposta_correcta;
 }
 
+// una cel·la de taula markdown no pot tenir "|" ni salts de línia
+function celda(text) {
+  return String(text || "").replace(/\|/g, "\\|").replace(/\s*\n\s*/g, " ");
+}
+
 const pctEncert = totalComparades ? ((totalCorrectes / totalComparades) * 100).toFixed(1) : "0.0";
 
 console.log(`Preguntes esperades (curs ${curs}): ${idsEsperats.length}`);
@@ -99,13 +108,14 @@ console.log(`Respostes rebudes i comparades: ${totalComparades}`);
 console.log(`Encerts: ${totalCorrectes} (${pctEncert}%)`);
 console.log(`Discrepàncies: ${discrepancies.length}`);
 console.log(`Marcades com a ambigües: ${ambigues.length}`);
+console.log(`Notes en preguntes no marcades com a ambigües: ${notesSenseAmbiguitat.length}`);
 console.log(`No retornades: ${noRetornades.length}`);
 
 const lines = [];
 lines.push("# Informe del solucionador cec");
 lines.push("");
 lines.push(`Generat: ${new Date().toISOString()}`);
-lines.push(`Curs: ${curs} · Carpeta de resultats: ${resultatsDir}`);
+lines.push(`Curs: ${curs}${nivellFiltre ? ` · Nivell: ${nivellFiltre}` : ""} · Carpeta de resultats: ${resultatsDir}`);
 lines.push("");
 lines.push(`- Preguntes esperades: ${idsEsperats.length}`);
 lines.push(`- Respostes comparades: ${totalComparades}`);
@@ -117,16 +127,22 @@ lines.push("");
 
 lines.push("## Discrepàncies (resposta del solucionador vs clau)");
 lines.push("");
-lines.push("| id | tipus | resposta del solucionador | clau |");
-lines.push("|---|---|---|---|");
-discrepancies.forEach((d) => lines.push(`| ${d.id} | ${d.tipus} | ${d.respostaSolucionador} | ${JSON.stringify(d.clau)} |`));
+lines.push("| id | tipus | resposta del solucionador | clau | nota del solucionador |");
+lines.push("|---|---|---|---|---|");
+discrepancies.forEach((d) => lines.push(`| ${d.id} | ${d.tipus} | ${celda(d.respostaSolucionador)} | ${celda(JSON.stringify(d.clau))} | ${celda(d.nota)} |`));
 lines.push("");
 
 lines.push("## Preguntes marcades com a ambigües pel solucionador");
 lines.push("");
 ambigues.forEach((a) => {
-  lines.push(`- **${a.id}** (${a.tipus}): ${a.altres.length ? JSON.stringify(a.altres) : "(sense detall)"}`);
+  const detall = [a.altres.length ? JSON.stringify(a.altres) : "", a.nota ? `nota: ${a.nota}` : ""].filter(Boolean).join(" · ");
+  lines.push(`- **${a.id}** (${a.tipus}): ${detall || "(sense detall)"}`);
 });
+lines.push("");
+
+lines.push("## Notes del solucionador en preguntes NO marcades com a ambigües");
+lines.push("");
+notesSenseAmbiguitat.forEach((n) => lines.push(`- **${n.id}** (${n.tipus}): ${n.nota}`));
 lines.push("");
 
 lines.push("## Respostes alternatives per a resposta_escrita no cobertes per respostes_acceptades");

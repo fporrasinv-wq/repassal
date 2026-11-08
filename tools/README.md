@@ -66,12 +66,20 @@ faria un alumne, sense haver vist mai el fitxer de respostes.
 ```bash
 node tools/exportar-ciego.js --curs 5è
 node tools/exportar-ciego.js --curs 5è --nivell normal --salida tools/ciego
+node tools/exportar-ciego.js --curs 5è --nivell normal --salida /tmp/solucionador/fase2/ciego
 ```
+
+`--salida` pot ser una carpeta relativa a l'arrel del projecte o una
+ruta absoluta (útil per deixar els fitxers **fora** del repositori,
+que és el que convé quan els respon una IA que no ha de poder veure
+`data/questions.js`).
 
 **Què produeix.** Dins de `tools/ciego/` (carpeta de treball, no es
 versiona), un fitxer `.json` per cada lliçó i un
 `instruccions-solucionador.md` amb el format exacte que ha de seguir
-qui respongui.
+qui respongui. Entre els camps de cada resposta hi ha `ambigua`,
+`altres_opcions_defensables`, `altres_respostes_possibles` i `nota`
+(text breu, opcional, per explicar qualsevol problema de la pregunta).
 
 ---
 
@@ -85,16 +93,24 @@ amb les respostes reals del banc de preguntes.
 
 ```bash
 node tools/comparar.js --resultados tools/resultados --curs 5è
+node tools/comparar.js --resultados tools/resultados --curs 5è --nivell normal
 ```
+
+(`--nivell` és opcional: limita la comparació a un nivell, perquè les
+preguntes d'altres nivells no surtin com a "no retornades".)
 
 (`tools/resultados` ha de ser una carpeta amb els fitxers `.json` de
 respostes, amb el mateix format que explica
 `tools/ciego/instruccions-solucionador.md`.)
 
 **Què produeix.** `documentos/informe-solucionador.md`: on ha fallat,
-quines preguntes ha marcat com a ambigües, quines respostes
-alternatives ha proposat per a preguntes de resposta escrita que
-potser caldria afegir, i quines preguntes no ha respost.
+quines preguntes ha marcat com a ambigües (amb la seva `nota`), les
+notes que ha deixat en preguntes que no ha marcat com a ambigües, quines
+respostes alternatives ha proposat per a preguntes de resposta escrita
+que potser caldria afegir, i quines preguntes no ha respost. **Aquest
+informe només llista: no corregeix res.** Cada desacord l'ha de revisar
+una persona, perquè el desacord pot ser un error de la clau o un error
+del solucionador.
 
 ---
 
@@ -140,8 +156,46 @@ errors sembrats ha detectat (per cada tipus d'error), i quantes
 node tools/medir-benchmark.js --resultados tools/resultados
 ```
 
-**Què produeix.** `documentos/informe-benchmark.md` amb les
-estadístiques de detecció i la llista d'ids no detectats.
+Opcionalment, `--informe <fitxer.md>` canvia on s'escriu l'informe.
+
+**Què produeix.** Un informe (per defecte
+`tools/benchmark/informe-benchmark.md`, que **no es versiona** perquè hi
+surten els ids dels mutants i les seves claus) amb:
+
+- detecció per tipus de mutació, i per quina via s'ha detectat
+  (resposta diferent de la clau sembrada, o marca d'ambigua);
+- falses alarmes sobre els controls, **desglossades per tipus de
+  pregunta**;
+- per a cada mutant no detectat i cada fals alarma: la resposta del
+  solucionador, la clau (sembrada i original) i la seva `nota`;
+- el veredicte del **llindar** (detecció >= 90% en `test-clau-canviada`,
+  `veritat-fals-invertit` i `ordenar-elements-intercanviats`, i falses
+  alarmes <= 10% sobre els controls).
+
+Els mutants `test-opcio-duplicada` i `emparellar-dreta-duplicada` es
+mostren a part i **no compten per al llindar**: els detecta
+`validar.js`, no cal que els detecti el solucionador.
+
+Cal saber que a 5è no hi surt cap mutant `aritmetica-numero-alterat`
+(no hi ha preguntes amb el patró "a op b" exacte) i que només hi ha 7
+preguntes `ordenar` en tot el curs: amb 7 mutants, el 90% exigeix
+detectar-los tots 7.
+
+---
+
+## 6. `prompt-solucionador.md` — l'encàrrec literal als agents
+
+**Què és.** El text exacte (en castellà, tal com el reben els agents)
+que es dona a cada agent solucionador, amb les rutes per substituir. El
+guardem perquè la prova sigui repetible. No porta cap pista de quines
+preguntes són mutants ni que hi ha errors sembrats.
+
+**Com s'usa.** Es copia el text, es substitueixen `{CURS}`,
+`{CARPETA}`, `{FITXERS}` i `{RESULTATS}`, i es dona a un agent
+independent. Les regles d'independència (carpetes fora del repo, un
+lot per agent, descartar resultats si l'agent ha llegit el repo) són
+al propi fitxer i al pas a pas de
+`documentos/informe-calibracio-solucionador.md`.
 
 ---
 
@@ -153,11 +207,24 @@ estadístiques de detecció i la llista d'ids no detectats.
    `exportar-ciego.js` → es respon → `comparar.js`.
 3. Si vols saber si aquest "algú" realment s'adona quan alguna cosa
    està malament: `sembrar-fallos.js` → es responen les 120 preguntes
-   barrejades → `medir-benchmark.js`.
+   barrejades → `medir-benchmark.js`. Només si supera el llindar té
+   sentit fiar-se'n per a l'auditoria real (pas 2).
+
+El pas a pas complet, amb el que es va fer i els resultats de la
+primera calibració, és a
+`documentos/informe-calibracio-solucionador.md`.
 
 ## Carpetes que no es versionen
 
 `tools/ciego/`, `tools/resultados/` i el contingut de
 `tools/benchmark/` (excepte el seu README) són dades de treball que es
 regeneren executant els scripts — per això estan a `.gitignore`. Els
-informes finals (`documentos/informe-*.md`) sí que es versionen.
+informes finals (`documentos/informe-*.md`) sí que es versionen, **excepte**
+l'informe del benchmark (`tools/benchmark/informe-benchmark.md`), que
+conté ids i claus dels mutants i viu dins la carpeta no versionada.
+
+Compte: `tools/resultados/` ha de contenir només els resultats d'una
+mateixa prova. Els scripts llegeixen tots els `.json` de la carpeta i,
+si hi barreges els resultats del benchmark amb els d'una auditoria
+real, les respostes de les preguntes amb el mateix id se sobreescriuen
+entre elles. Buida la carpeta entre una prova i l'altra.

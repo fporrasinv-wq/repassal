@@ -35,7 +35,8 @@ if (seleccionades.length === 0) {
   process.exit(2);
 }
 
-const outDir = path.join(ROOT, sortidaDir);
+// --salida pot ser una ruta absoluta (p. ex. una carpeta fora del repo) o relativa a l'arrel
+const outDir = path.isAbsolute(sortidaDir) ? sortidaDir : path.join(ROOT, sortidaDir);
 fs.mkdirSync(outDir, { recursive: true });
 
 const rng = mulberry32(42); // llavor fixa: reproduïble entre execucions
@@ -112,7 +113,8 @@ nom que repliqui aquesta estructura:
       "resposta": "<la teva resposta>",
       "ambigua": false,
       "altres_opcions_defensables": [],
-      "altres_respostes_possibles": []
+      "altres_respostes_possibles": [],
+      "nota": ""
     }
   ]
 }
@@ -137,14 +139,17 @@ Per a cada pregunta:
   correctament la mateixa resposta — sinònims, variants ortogràfiques
   raonables, amb o sense unitats, ordre diferent si la resposta és una
   llista, etc. Deixa-ho buit si no se t'acut cap alternativa raonable.
+- **"nota"** (opcional, text breu): si la pregunta té algun problema
+  (ambigua, imprecisa, més d'una resposta defensable, cap opció
+  correcta...), explica'l aquí en una o dues frases. Deixa-ho buit
+  ("") si no hi ha cap problema.
 
-Desa els fitxers de sortida en una carpeta pròpia (per exemple
-\`tools/resultados/\`) per poder-los passar després a
-\`tools/comparar.js\`.
+Desa els fitxers de sortida a la carpeta de resultats que se't
+indiqui, amb el mateix nom que el fitxer d'entrada.
 `;
 
 fs.writeFileSync(path.join(outDir, "instruccions-solucionador.md"), instruccions);
 
-console.log(`Generats ${fitxersGenerats} fitxers de lliçó a ${path.relative(ROOT, outDir)}/`);
+console.log(`Generats ${fitxersGenerats} fitxers de lliçó a ${outDir}/`);
 console.log(`Preguntes totals exportades: ${seleccionades.length}`);
-console.log(`Instruccions per al solucionador: ${path.relative(ROOT, path.join(outDir, "instruccions-solucionador.md"))}`);
+console.log(`Instruccions per al solucionador: ${path.join(outDir, "instruccions-solucionador.md")}`);
