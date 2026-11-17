@@ -512,7 +512,8 @@ function unitatPermesa(q, grup) {
   const en = enunciat.match(/\(\s*en\s+([^)]+?)\s*\)/);
   const grupEn = en && UNITATS_RESPOSTA.find((g) => g.includes(en[1]));
   if (grupEn) return grupEn === grup;
-  return grup.some((forma) => new RegExp("(?<!\\p{L})" + forma + "(?![\\p{L}\\p{N}'’])", "u").test(enunciat));
+  // sense lookbehind: Safari anterior a 16.4 no el suporta
+  return grup.some((forma) => new RegExp("(?:^|[^\\p{L}])" + forma + "(?![\\p{L}\\p{N}'’])", "u").test(enunciat));
 }
 
 // Si la resposta és un número amb unitat, retorna només el número (o null si no s'ha de tolerar).
