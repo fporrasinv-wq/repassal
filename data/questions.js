@@ -7759,7 +7759,7 @@ const QUESTIONS = [
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
     "explicacio": "En 4,573 el 5 són dècimes, el 7 centèsimes i el 3 mil·lèsimes.",
-    "pregunta": "Quin és el valor de la xifra 7 en el nombre 4,573?",
+    "pregunta": "En el nombre 4,573, quin ordre decimal ocupa la xifra 7?",
     "resposta_correcta": "Centèsimes",
     "respostes_acceptades": [
       "Centèsimes",
@@ -7816,7 +7816,9 @@ const QUESTIONS = [
     "resposta_correcta": "2,8",
     "respostes_acceptades": [
       "2,8",
-      "2.8"
+      "2.8",
+      "el 2,8",
+      "2,80"
     ]
   },
   {
@@ -7893,7 +7895,11 @@ const QUESTIONS = [
     "respostes_acceptades": [
       "25%",
       "25 %",
-      "25"
+      "25",
+      "el 25%",
+      "el 25 %",
+      "25 per cent",
+      "vint-i-cinc per cent"
     ]
   },
   {
@@ -7946,7 +7952,11 @@ const QUESTIONS = [
     "respostes_acceptades": [
       "25%",
       "25 %",
-      "25"
+      "25",
+      "el 25%",
+      "el 25 %",
+      "25 per cent",
+      "vint-i-cinc per cent"
     ]
   },
   {
@@ -8068,7 +8078,8 @@ const QUESTIONS = [
     "pregunta": "Escriu el primer múltiple de 7 més gran que 20.",
     "resposta_correcta": "21",
     "respostes_acceptades": [
-      "21"
+      "21",
+      "vint-i-u"
     ]
   },
   {
@@ -8102,7 +8113,7 @@ const QUESTIONS = [
     "tipus": "emparellar",
     "origen": "curriculum_base",
     "explicacio": "",
-    "pregunta": "Relaciona cada figura amb la seva fórmula.",
+    "pregunta": "Relaciona cada mesura amb la seva fórmula.",
     "parelles": [
       {
         "a": "Perímetre d'un rectangle",
@@ -8132,7 +8143,9 @@ const QUESTIONS = [
     "pregunta": "Calcula el perímetre d'un rectangle de 6 cm de base i 3 cm d'alçada (en cm).",
     "resposta_correcta": "18",
     "respostes_acceptades": [
-      "18"
+      "18",
+      "18 cm",
+      "18cm"
     ]
   },
   {
@@ -8169,7 +8182,11 @@ const QUESTIONS = [
     "pregunta": "Calcula l'àrea d'un rectangle de 5 cm de base i 4 cm d'alçada (en cm²).",
     "resposta_correcta": "20",
     "respostes_acceptades": [
-      "20"
+      "20",
+      "20 cm²",
+      "20cm²",
+      "20 cm2",
+      "20cm2"
     ]
   },
   {
@@ -8247,7 +8264,8 @@ const QUESTIONS = [
     "pregunta": "Calcula la mitjana de 4, 6 i 8.",
     "resposta_correcta": "6",
     "respostes_acceptades": [
-      "6"
+      "6",
+      "sis"
     ]
   },
   {
@@ -8318,7 +8336,8 @@ const QUESTIONS = [
     "pregunta": "Calcula la mitjana de 10, 20 i 30.",
     "resposta_correcta": "20",
     "respostes_acceptades": [
-      "20"
+      "20",
+      "vint"
     ]
   },
   {
@@ -8933,7 +8952,11 @@ const QUESTIONS = [
       "La narració",
       "la narració",
       "Narració",
-      "narració"
+      "narració",
+      "El text narratiu",
+      "Text narratiu",
+      "Narratiu",
+      "Una narració"
     ]
   },
   {
@@ -8953,7 +8976,11 @@ const QUESTIONS = [
       "La descripció",
       "la descripció",
       "Descripció",
-      "descripció"
+      "descripció",
+      "El text descriptiu",
+      "Text descriptiu",
+      "Descriptiu",
+      "Una descripció"
     ]
   },
   {
@@ -9411,8 +9438,8 @@ const QUESTIONS = [
     "nivell": "normal",
     "tipus": "veritat_fals",
     "origen": "curriculum_base",
-    "explicacio": "Com que busca un llibre sobre volcans, es pot deduir aquest interès.",
-    "pregunta": "Es pot deduir del text que la Marta té interès per la natura o la ciència.",
+    "explicacio": "El text diu que la bibliotecària li va recomanar un llibre amb moltes fotografies.",
+    "pregunta": "Segons el text, la bibliotecària li va recomanar un llibre amb moltes fotografies.",
     "resposta_correcta": true,
     "text": "La Marta va anar a la biblioteca del poble per buscar un llibre sobre volcans. La bibliotecària li va recomanar un llibre amb moltes fotografies i li va explicar que els volcans expulsen lava molt calenta."
   },
@@ -10165,7 +10192,11 @@ const QUESTIONS = [
       "la narración",
       "Narracion",
       "narracion",
-      "La narracion"
+      "La narracion",
+      "El texto narrativo",
+      "Texto narrativo",
+      "Narrativo",
+      "Una narración"
     ]
   },
   {
@@ -10186,7 +10217,11 @@ const QUESTIONS = [
       "la descripción",
       "Descripcion",
       "descripcion",
-      "La descripcion"
+      "La descripcion",
+      "El texto descriptivo",
+      "Texto descriptivo",
+      "Descriptivo",
+      "Una descripción"
     ]
   },
   {
@@ -10645,8 +10680,8 @@ const QUESTIONS = [
     "nivell": "normal",
     "tipus": "veritat_fals",
     "origen": "curriculum_base",
-    "explicacio": "Como busca un libro sobre volcanes, se puede deducir ese interés.",
-    "pregunta": "Se puede deducir del texto que Marta tiene interés por la naturaleza o la ciencia.",
+    "explicacio": "El texto dice que la bibliotecaria le recomendó un libro con muchas fotografías.",
+    "pregunta": "Según el texto, la bibliotecaria le recomendó un libro con muchas fotografías.",
     "resposta_correcta": true,
     "text": "Marta fue a la biblioteca del pueblo para buscar un libro sobre volcanes. La bibliotecaria le recomendó un libro con muchas fotografías y le explicó que los volcanes expulsan lava muy caliente."
   },
@@ -11414,8 +11449,8 @@ const QUESTIONS = [
     "nivell": "normal",
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
-    "explicacio": "After «is» as a hobby, English uses the -ing form: swimming.",
-    "pregunta": "Complete: «My favourite hobby is ___.»",
+    "explicacio": "After «likes», English uses the -ing form of the verb: swimming.",
+    "pregunta": "Complete: «Tom likes ___ (swim) in the sea.» Write the -ing form.",
     "resposta_correcta": "swimming",
     "respostes_acceptades": [
       "swimming",
@@ -11628,7 +11663,7 @@ const QUESTIONS = [
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
     "explicacio": "In present simple, «she/he/it» verbs end in -s: she goes.",
-    "pregunta": "Complete: «She ___ to school every day.»",
+    "pregunta": "Complete: «She ___ (go) to school every day.»",
     "resposta_correcta": "goes",
     "respostes_acceptades": [
       "goes",
@@ -11646,7 +11681,7 @@ const QUESTIONS = [
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
     "explicacio": "With «they», present simple verbs keep the base form: they play.",
-    "pregunta": "Complete: «They ___ football on Saturdays.»",
+    "pregunta": "Complete: «They ___ (play) football on Saturdays.»",
     "resposta_correcta": "play",
     "respostes_acceptades": [
       "play",
@@ -11872,7 +11907,10 @@ const QUESTIONS = [
     "pregunta": "Which punctuation mark ends a question in English?",
     "resposta_correcta": "?",
     "respostes_acceptades": [
-      "?"
+      "?",
+      "question mark",
+      "a question mark",
+      "the question mark"
     ]
   },
   {
@@ -12676,7 +12714,7 @@ const QUESTIONS = [
     "tipus": "emparellar",
     "origen": "curriculum_base",
     "explicacio": "",
-    "pregunta": "Relaciona cada tipus d'animal amb la seva alimentació.",
+    "pregunta": "Relaciona cada tipus d'ésser viu amb la seva alimentació.",
     "parelles": [
       {
         "a": "Herbívors",
@@ -12823,7 +12861,7 @@ const QUESTIONS = [
     "tipus": "emparellar",
     "origen": "curriculum_base",
     "explicacio": "",
-    "pregunta": "Relaciona cada grup de plantes amb la seva característica.",
+    "pregunta": "Relaciona cada grup d'éssers vius amb la seva característica.",
     "parelles": [
       {
         "a": "Angiospermes",
@@ -13074,7 +13112,8 @@ const QUESTIONS = [
       "Fusió",
       "fusio",
       "fusió",
-      "Fusio"
+      "Fusio",
+      "La fusió"
     ]
   },
   {
@@ -13766,8 +13805,8 @@ const QUESTIONS = [
     "nivell": "normal",
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
-    "explicacio": "La meteorologia estudia i registra les dades del temps atmosfèric.",
-    "pregunta": "Com s'anomena l'estudi i registre de les dades meteorològiques?",
+    "explicacio": "La meteorologia és la ciència que estudia el temps atmosfèric.",
+    "pregunta": "Com s'anomena la ciència que estudia el temps atmosfèric?",
     "resposta_correcta": "La meteorologia",
     "respostes_acceptades": [
       "La meteorologia",
@@ -13981,7 +14020,11 @@ const QUESTIONS = [
       "la Constitució",
       "Constitució",
       "constitucio",
-      "La Constitucio"
+      "La Constitucio",
+      "La Constitució espanyola",
+      "Constitució espanyola",
+      "La Constitució de 1978",
+      "Constitució de 1978"
     ]
   },
   {
@@ -13994,8 +14037,8 @@ const QUESTIONS = [
     "nivell": "normal",
     "tipus": "resposta_escrita",
     "origen": "curriculum_base",
-    "explicacio": "L'Estat espanyol es divideix en 17 comunitats autònomes.",
-    "pregunta": "Quantes comunitats autònomes formen l'Estat espanyol?",
+    "explicacio": "L'Estat espanyol es divideix en 17 comunitats autònomes; Ceuta i Melilla són ciutats autònomes i no es compten entre les 17.",
+    "pregunta": "Quantes comunitats autònomes té Espanya, sense comptar les ciutats autònomes de Ceuta i Melilla?",
     "resposta_correcta": "17",
     "respostes_acceptades": [
       "17",
