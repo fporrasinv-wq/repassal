@@ -467,6 +467,7 @@ function subjectStats(subject) {
   return { total, done };
 }
 
+/* >>> correcció de resposta_escrita (funcions pures, sense DOM: tools/provar-resposta.js n'extreu aquest bloc per provar-lo sense navegador) */
 function normalizeAnswer(str) {
   const trimmed = String(str).trim();
   if (trimmed === "?" || trimmed === "!") return trimmed;
@@ -491,6 +492,47 @@ function answerSetsMatch(accepted, given) {
   if (sa.length === 0 || sa.length !== sb.length) return false;
   return sa.every((v, i) => v === sb[i]);
 }
+
+// Article inicial que s'ignora en comparar (català, castellà i anglès); "l'" va enganxat al nom
+const ARTICLE_INICIAL = /^(?:(?:el|la|els|les|los|las|un|una|the|an|a)\s+|l['’])/;
+
+function treuArticleInicial(s) {
+  const t = s.replace(ARTICLE_INICIAL, "");
+  return t === "" ? s : t;
+}
+
+// Unitats que s'ignoren darrere d'un número (cada fila agrupa les formes equivalents)
+const UNITATS_RESPOSTA = [["cm²", "cm2"], ["m²", "m2"], ["km"], ["kg"], ["cm"], ["ml"], ["m"], ["g"], ["l"], ["€", "euros", "euro"]];
+const UNITATS_PERCENT = ["%", "per cent", "por ciento"];
+const NUMERO_I_UNITAT = /^(-?\d+(?:[.,]\d+)*)\s*(cm²|cm2|m²|m2|km|kg|cm|ml|m|g|l|€|euros|%|per cent|por ciento)$/;
+
+// La unitat només val si surt a l'enunciat; si hi ha "(en cm²)", val només aquesta
+function unitatPermesa(q, grup) {
+  const enunciat = normalizeAnswer(q.pregunta);
+  const en = enunciat.match(/\(\s*en\s+([^)]+?)\s*\)/);
+  const grupEn = en && UNITATS_RESPOSTA.find((g) => g.includes(en[1]));
+  if (grupEn) return grupEn === grup;
+  return grup.some((forma) => new RegExp("(?<!\\p{L})" + forma + "(?![\\p{L}\\p{N}'’])", "u").test(enunciat));
+}
+
+// Si la resposta és un número amb unitat, retorna només el número (o null si no s'ha de tolerar).
+// "%" i "per cent" només es toleren quan la clau és un percentatge (acaba en %)
+function treuUnitat(q, val) {
+  const m = normalizeAnswer(val).match(NUMERO_I_UNITAT);
+  if (!m) return null;
+  if (UNITATS_PERCENT.includes(m[2])) return /%\s*$/.test(String(q.resposta_correcta).trim()) ? m[1] : null;
+  return unitatPermesa(q, UNITATS_RESPOSTA.find((g) => g.includes(m[2]))) ? m[1] : null;
+}
+
+function respostaEscritaCorrecta(q, val) {
+  if (q.conjunt) return q.respostes_acceptades.some((a) => answerSetsMatch(a, val));
+  const donades = [normalizeAnswer(val)];
+  const nombre = treuUnitat(q, val);
+  if (nombre !== null) donades.push(nombre);
+  const acceptades = q.respostes_acceptades.map((a) => treuArticleInicial(normalizeAnswer(a)));
+  return donades.some((d) => acceptades.includes(treuArticleInicial(d)));
+}
+/* <<< fi de la correcció de resposta_escrita */
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -792,9 +834,7 @@ function checkAnswer() {
     const val = (document.getElementById("fill-input") || {}).value || "";
     if (!val.trim()) return;
     session.fillValue = val;
-    correct = q.conjunt
-      ? q.respostes_acceptades.some((a) => answerSetsMatch(a, val))
-      : q.respostes_acceptades.some((a) => normalizeAnswer(a) === normalizeAnswer(val));
+    correct = respostaEscritaCorrecta(q, val);
   } else if (q.tipus === "ordenar") {
     if (!session.selected || session.selected.length !== q.elements_ordre_correcte.length) return;
     const assembled = session.selected.map((i) => q.orderBank[i].text).join(" ");
