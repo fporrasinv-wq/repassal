@@ -199,6 +199,41 @@ al propi fitxer i al pas a pas de
 
 ---
 
+## 7. `provar-resposta.js` — prova la correcció de les respostes escrites
+
+**Què fa.** Comprova, sense navegador, com corregeix l'app les preguntes
+de tipus `resposta_escrita`. Extreu d'`app.js` el bloc que hi ha entre els
+marcadors `>>> correcció de resposta_escrita` i `<<< fi de la correcció de
+resposta_escrita` (funcions pures, sense DOM) i l'executa en un entorn
+aïllat de Node: és exactament el mateix text que fa servir l'app, no una
+còpia. Per això cal no esborrar aquests marcadors ni posar-hi codi que
+necessiti el navegador. Fa cinc grups de proves sobre les 74 preguntes
+`resposta_escrita` dels 4 cursos: (a) que la clau i cada resposta acceptada
+segueixin essent acceptades; (b) que s'acceptin un article inicial ("el
+25%", "L'euro") i la unitat darrere d'un número ("18 cm"); (c) que es
+rebutgin les respostes que no s'han d'acceptar ("18 m", "19", "to swim", un
+article sol, una resposta buida); (d) un control negatiu automàtic, que
+posa com a resposta d'una pregunta la clau de les altres i comprova que
+cap resposta nova és acceptada; (e) un escombrat d'unitats sobre totes les
+claus numèriques. Les regles són: s'ignora un article inicial (el, la, els,
+les, l', un, una, los, las, the, a, an) però mai si la resposta queda buida;
+una unitat només es tolera darrere d'un número i si surt a l'enunciat (si
+l'enunciat diu "(en cm²)", només aquesta); "%" i "per cent" només si la clau
+acaba en %. Les preguntes amb `conjunt` no canvien.
+
+**Com es llança.**
+
+```bash
+node tools/provar-resposta.js
+```
+
+**Què produeix.** Un llistat per pantalla amb OK/FALLA per cada prova i el
+recompte final. Surt amb codi 1 si alguna falla, així que serveix per
+comprovar-ho abans d'unir qualsevol canvi a `app.js` o a les respostes
+acceptades. No modifica cap fitxer.
+
+---
+
 ## Un flux de treball típic
 
 1. `node tools/validar.js` — revisió ràpida, sense dependre de ningú
