@@ -234,6 +234,56 @@ acceptades. No modifica cap fitxer.
 
 ---
 
+## 8. `ancoratge.js` — ancoratge curricular de les lliçons de 1r
+
+**Què fa.** Mesura fins a quin punt les 144 preguntes de 1r (24 lliçons)
+estan ancorades als sabers oficials del cicle inicial
+(`documentos/curriculum-cicle-inicial.md`, 166 sabers de 1r i 2n) i si el
+seu nivell és adequat per a 1r, i detecta quins sabers no toca cap lliçó.
+És **només un diagnòstic**: no canvia cap pregunta ni `data/questions.js`;
+els resultats són per a revisió humana. El judici el fan agents d'IA
+independents (dos per matèria, A i B, que no es veuen entre ells), amb
+l'encàrrec literal de `tools/prompt-ancoratge.md`. Té tres subcomandes:
+
+- `preparar` crea, **fora del repositori**, `/tmp/c1/<matèria>/`
+  (`curriculum.md` amb només la secció de l'àrea, `preguntes.json` sense
+  dificultat, nivell, origen, cicle ni explicació, i `instruccions.md`) i
+  els prompts ja omplerts a `/tmp/c1/prompts/`.
+- `comprovar` valida els JSON dels agents (`/tmp/c1/resultats/`): format,
+  que hi sigui cada pregunta una sola vegada, que cada codi de saber
+  existeixi i la cita coincideixi amb el principi del seu text, que
+  «cap» vulgui dir sense sabers, que hi hagi nota quan cal, i que la
+  cobertura tingui tots els sabers de l'àrea. També mostra els fitxers que
+  cada agent diu que ha llegit, per comprovar l'aïllament.
+- `informe` escriu `documentos/informe-ancoratge-1r.md` (recompte per
+  ancoratge i nivell, lliçons a REVISAR segons els llindars de la constant
+  `LLINDARS`, preguntes marcades, concordança entre A i B i sabers sense
+  cobrir).
+
+**Com repetir-ho, pas a pas.**
+
+```bash
+node tools/ancoratge.js preparar
+```
+
+Llança 12 agents (A i B de `mat`, `cat`, `cas`, `eng`, `soc` i `nat`), un
+per cada prompt de `/tmp/c1/prompts/`, com a màxim 6 alhora i amb un model
+diferent del que edita el contingut. Mira a les transcripcions que cap
+agent no ha llegit res fora de la seva carpeta (ni `data/questions.js`, ni
+resultats d'altres agents); si ho ha fet, descarta el seu resultat i
+repeteix aquell agent.
+
+```bash
+node tools/ancoratge.js comprovar
+node tools/ancoratge.js informe --model "..." --consum "..." --relancats "..."
+```
+
+Relança una sola vegada els agents el resultat dels quals sigui invàlid. Els
+agents poden donar respostes lleugerament diferents cada vegada, així que no
+esperis un informe idèntic en repetir-ho.
+
+---
+
 ## Un flux de treball típic
 
 1. `node tools/validar.js` — revisió ràpida, sense dependre de ningú
